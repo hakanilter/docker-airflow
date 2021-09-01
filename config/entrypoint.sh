@@ -26,8 +26,7 @@ export \
   AIRFLOW__CORE__SQL_ALCHEMY_CONN
 
 # Change ownership of airflow home and swap user
-# Note, this is not done recursively to avoid slow boots when EFS is mounted under airflow home
-# chown airflow: ${AIRFLOW_HOME} ${AIRFLOW_HOME}/* ${AIRFLOW_HOME}/efs/dags ${AIRFLOW_HOME}/efs/logs
+# chown airflow: ${AIRFLOW_HOME} ${AIRFLOW_HOME}/* ${AIRFLOW_HOME}/dags ${AIRFLOW_HOME}/logs
 
 # Load DAGs exemples (default: Yes)
 if [[ -z "$AIRFLOW__CORE__LOAD_EXAMPLES" && "${LOAD_EX:=n}" == n ]]
@@ -40,7 +39,7 @@ if [[ -z "${REMOTE_DAGS_BUCKET}" ]]; then
   echo "No remote dags bucket provided"
 else
   echo "Found a remote dags bucket: ${REMOTE_DAGS_BUCKET}"
-  aws s3 sync s3://${REMOTE_DAGS_BUCKET}/dags ${AIRFLOW_HOME}/efs/dags || echo "No dags folder found on the bucket"
+  aws s3 sync s3://${REMOTE_DAGS_BUCKET}/dags ${AIRFLOW_HOME}/dags || echo "No dags folder found on the bucket"
   aws s3 sync s3://${REMOTE_DAGS_BUCKET}/plugins ${AIRFLOW_HOME}/plugins || echo "No plugins folder found on the bucket"
   aws s3 cp s3://${REMOTE_DAGS_BUCKET}/requirements.txt /requirements.txt || echo "No requirements file found on the bucket"
   echo "Sync completed"
